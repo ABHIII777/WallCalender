@@ -110,7 +110,7 @@ export default function CalendarCard() {
         <div
             ref={containerRef}
             style={{ perspective: "1800px" }}
-            className="h-[800px] w-[500px] relative"
+            className="h-[800px] w-[500px] relative mt-10"
         >
 
             {/* SHADOW OVERLAY (adds realism) */}
@@ -172,17 +172,17 @@ function CardContent({
     const month = date.getMonth()
 
     return (
-        <Card className="h-full w-full overflow-hidden flex flex-col rounded-2xl shadow-xl">
+        <Card className="h-full w-full overflow-hidden flex flex-col rounded-2xl shadow-[-25px_25px_40px_-10px_rgba(0,0,0,0.15)] bg-white">
 
-            <div className="h-[40%] shrink-0 relative overflow-hidden">
-                <RightDesign month={month} />
+            <div className="h-[55%] shrink-0 relative overflow-visible z-10">
+                <RightDesign month={month} year={year} />
             </div>
 
-            <div className="h-[1px] shrink-0 bg-gray-200" />
+            {/* No divider needed based on design */}
 
-            <div className="flex-1 bg-white p-6 flex gap-4 overflow-hidden">
+            <div className="flex-1 bg-white pt-2 pb-6 px-6 flex gap-6 overflow-hidden z-0">
 
-                <div className="w-[38%] h-full overflow-y-auto">
+                <div className="w-[35%] h-full pt-10">
                     <NotesPanel
                         selectedDate={selectedDate}
                         notes={notes}
@@ -190,9 +190,7 @@ function CardContent({
                     />
                 </div>
 
-                <div className="w-[1px] bg-gray-200" />
-
-                <div className="w-[62%] flex flex-col">
+                <div className="w-[65%] flex flex-col pt-2">
 
                     <Header
                         currentDate={date}

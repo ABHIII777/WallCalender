@@ -5,26 +5,26 @@ export default function Header({ currentDate, setCurrentDate, isAnimating }: any
   const month = currentDate.getMonth()
 
   return (
-    <div className="flex justify-between items-center mb-6">
+    <div className="flex justify-end items-center mb-2 gap-2">
 
       <Button
-        variant="ghost"
+        variant="outline"
+        size="icon"
+        className="h-8 w-8 rounded-full shadow-sm text-gray-500 hover:text-gray-900 border-gray-200 bg-white"
         onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
         disabled={isAnimating}
       >
-        ←
+        <span className="text-xs">←</span>
       </Button>
 
-      <h2 className="text-xl font-semibold text-gray-700">
-        {currentDate.toLocaleString("default", { month: "long" })} {year}
-      </h2>
-
       <Button
-        variant="ghost"
+        variant="outline"
+        size="icon"
+        className="h-8 w-8 rounded-full shadow-sm text-gray-500 hover:text-gray-900 border-gray-200 bg-white"
         onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
         disabled={isAnimating}
       >
-        →
+        <span className="text-xs">→</span>
       </Button>
 
     </div>

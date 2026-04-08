@@ -2,9 +2,10 @@
 
 type Props = {
   month: number
+  year?: number
 }
 
-export default function RightDesign({ month }: Props) {
+export default function RightDesign({ month, year }: Props) {
 
   const images = [
     "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1200&auto=format&fit=crop",
@@ -23,37 +24,46 @@ export default function RightDesign({ month }: Props) {
 
   const safeMonth = ((month ?? new Date().getMonth()) % 12 + 12) % 12
 
-  const monthName = new Date(2026, safeMonth).toLocaleString("default", {
+  const monthName = new Date(year ?? 2026, safeMonth).toLocaleString("default", {
     month: "long"
-  })
+  }).toUpperCase()
+
+  const displayYear = year ?? 2026
 
   return (
-    <div className="w-full h-full relative overflow-hidden bg-white">
+    <div className="w-full h-full relative bg-white">
 
-      {/* IMAGE (no GSAP, let parent handle animation) */}
+      {/* IMAGE */}
       <img
         src={images[safeMonth]}
         alt={monthName}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute top-0 left-0 w-full h-[150%] object-cover object-center"
         style={{
-          clipPath: "polygon(0 0, 100% 0, 100% 65%, 40% 100%, 0 100%)"
+          clipPath: "polygon(0 0, 100% 0, 100% 45%, 50% 70%, 0 45%)"
         }}
       />
 
-      {/* BLUE PANEL */}
+      {/* BLUE V - LEFT WING */}
       <div
-        className="absolute bottom-0 right-0 w-56 h-40 bg-blue-500 z-20 rounded-br-2xl"
+        className="absolute top-0 left-0 w-full h-[150%] bg-[#1ea0df] z-10"
         style={{
-          clipPath: "polygon(40% 0, 100% 0, 100% 100%, 0 100%)"
+          clipPath: "polygon(0 45%, 50% 70%, 0 70%)"
         }}
       />
 
-      {/* TEXT */}
-      <div className="absolute bottom-8 right-8 z-30 text-white text-right">
-        <p className="text-sm opacity-80">2026</p>
-        <h2 className="text-xl font-bold">{monthName}</h2>
+      {/* BLUE V - RIGHT WING text container */}
+      <div
+        className="absolute top-0 left-0 w-full h-[150%] bg-[#1ea0df] z-10"
+        style={{
+          clipPath: "polygon(100% 45%, 100% 70%, 50% 70%)"
+        }}
+      >
+        <div className="absolute right-8 top-[55%] z-30 text-white text-right">
+          <p className="text-2xl font-light tracking-widest">{displayYear}</p>
+          <h2 className="text-3xl font-bold tracking-wider">{monthName}</h2>
+        </div>
       </div>
-
+      
     </div>
   )
 }

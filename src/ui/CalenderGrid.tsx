@@ -1,7 +1,6 @@
 "use client"
 
-import { useLayoutEffect, useRef } from "react"
-import gsap from "gsap"
+
 
 export default function CalendarGrid({
   year,
@@ -11,56 +10,50 @@ export default function CalendarGrid({
   notes
 }: any) {
 
-  const gridRef = useRef<HTMLDivElement>(null)
-
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const firstDay = (new Date(year, month, 1).getDay() + 6) % 7
+  const firstDay = (new Date(year, month, 1).getDay() + 6) % 7 // Monday as first day
 
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(".day",
-        { y: 20, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.03,
-          duration: 0.4,
-          ease: "power2.out"
-        }
-      )
-    }, gridRef)
-
-    return () => ctx.revert()
-  }, [month])
+  const weekDays = ["MON","TUE","WED","THU","FRI","SAT","SUN"]
 
   return (
-    <div ref={gridRef} className="grid grid-cols-7 gap-y-3 gap-x-2 text-center mt-4">
+    <div className="grid grid-cols-7 gap-y-4 gap-x-2 text-center">
 
-      {["Mo","Tu","We","Th","Fr","Sa","Su"].map((d, index) => (
-        <div key={d} className="text-sm text-gray-400">{d}</div>
+      {weekDays.map((d, index) => (
+        <div 
+          key={d} 
+          className={`text-xs font-bold ${index >= 5 ? 'text-[#1ea0df]' : 'text-gray-800'}`}
+        >
+          {d}
+        </div>
       ))}
 
       {Array.from({ length: firstDay }).map((_, i) => (
-        <div key={"empty-" + i}></div>
+        <div key={"empty-" + i} className="text-gray-300 text-sm font-medium py-1">
+           {new Date(year, month, 0 - (firstDay - i - 1)).getDate()}
+        </div>
       ))}
 
       {Array.from({ length: daysInMonth }).map((_, i) => {
         const day = i + 1
         const key = `${year}-${month}-${day}`
         const hasNote = notes[key]
+        
+        // Calculate day of week for this specific date (0 = Sun, 1 = Mon ... 6 = Sat)
+        const dateObj = new Date(year, month, day)
+        const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6
 
         return (
           <div
             key={day}
             onClick={() => setSelectedDate(key)}
-            className={`day py-2 rounded-lg text-sm cursor-pointer transition
-              hover:bg-yellow-100
-              ${selectedDate === key ? "bg-yellow-300 font-semibold" : ""}
+            className={`day py-1 rounded-md text-sm font-medium cursor-pointer transition relative
+              hover:bg-blue-50
+              ${selectedDate === key ? "bg-blue-100 text-blue-800 font-bold" : (isWeekend ? "text-[#1ea0df]" : "text-gray-800")}
             `}
           >
             {day}
             {hasNote && (
-              <div className="w-1 h-1 bg-red-500 mx-auto mt-1 rounded-full" />
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-[#1ea0df] rounded-full" />
             )}
           </div>
         )
