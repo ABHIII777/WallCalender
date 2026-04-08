@@ -10,11 +10,24 @@ export default function CalendarGrid({
   const firstDay = (new Date(year, month, 1).getDay() + 6) % 7
 
   return (
-    <div className="grid grid-cols-7 gap-x-2 gap-y-3 text-center mt-4">
+    <div className="grid grid-cols-7 gap-y-3 gap-x-2 text-center mt-4">
 
-      {["Mo","Tu","We","Th","Fr","Sa","Su"].map(d => (
-        <div key={d} className="text-sm text-gray-400">{d}</div>
-      ))}
+      {["Mo","Tu","We","Th","Fr","Sa","Su"].map((d, index) => {
+        const isWeekend = index === 5 || index === 6
+
+        return (
+          <div
+            key={d}
+            className={`text-sm ${
+              isWeekend
+                ? "text-yellow-500 font-medium"
+                : "text-gray-400"
+            }`}
+          >
+            {d}
+          </div>
+        )
+      })}
 
       {Array.from({ length: firstDay }).map((_, i) => (
         <div key={"empty-" + i}></div>
@@ -23,15 +36,24 @@ export default function CalendarGrid({
       {Array.from({ length: daysInMonth }).map((_, i) => {
         const day = i + 1
         const key = `${year}-${month}-${day}`
+
+        const dayOfWeek = new Date(year, month, day).getDay()
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+
         const hasNote = notes[key]
 
         return (
           <div
             key={day}
             onClick={() => setSelectedDate(key)}
-            className={`p-2 rounded-lg cursor-pointer transition
+            className={`py-2 rounded-lg text-sm cursor-pointer transition
               hover:bg-yellow-100
-              ${selectedDate === key ? "bg-yellow-300 text-black" : ""}
+              ${selectedDate === key ? "bg-yellow-300 font-semibold text-black" : ""}
+              ${
+                isWeekend
+                  ? "text-yellow-500 font-medium"
+                  : "text-gray-700"
+              }
             `}
           >
             {day}
