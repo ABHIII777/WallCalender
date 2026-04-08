@@ -32,17 +32,14 @@ export default function CalendarCard() {
   return (
     <Card className="h-[800px] w-[500px] overflow-hidden flex flex-col rounded-2xl shadow-xl">
 
-      {/* TOP IMAGE */}
       <div className="h-[40%] shrink-0 relative overflow-hidden">
         <RightDesign month={month} />
       </div>
 
       <div className="h-[1px] shrink-0 bg-gray-200" />
 
-      {/* BOTTOM CONTENT */}
       <div className="flex-1 bg-white p-6 flex gap-4 overflow-hidden">
 
-        {/* NOTES */}
         <div className="w-[38%] h-full overflow-y-auto">
           <NotesPanel
             selectedDate={selectedDate}
@@ -53,7 +50,6 @@ export default function CalendarCard() {
 
         <div className="w-[1px] bg-gray-200" />
 
-        {/* CALENDAR */}
         <div className="w-[62%] flex flex-col">
 
           <Header
