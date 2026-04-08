@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 
-export default function Header({ currentDate, setCurrentDate }: any) {
+export default function Header({ currentDate, setCurrentDate, isAnimating }: any) {
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
 
@@ -10,6 +10,7 @@ export default function Header({ currentDate, setCurrentDate }: any) {
       <Button
         variant="ghost"
         onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
+        disabled={isAnimating}
       >
         ←
       </Button>
@@ -21,6 +22,7 @@ export default function Header({ currentDate, setCurrentDate }: any) {
       <Button
         variant="ghost"
         onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
+        disabled={isAnimating}
       >
         →
       </Button>

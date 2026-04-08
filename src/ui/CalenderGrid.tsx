@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useLayoutEffect, useRef } from "react"
 import gsap from "gsap"
 
 export default function CalendarGrid({
@@ -16,7 +16,7 @@ export default function CalendarGrid({
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const firstDay = (new Date(year, month, 1).getDay() + 6) % 7
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(".day",
         { y: 20, opacity: 0 },

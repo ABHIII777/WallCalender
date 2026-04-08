@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useLayoutEffect, useRef } from "react"
 import gsap from "gsap"
 
 export default function NotesPanel({ selectedDate, notes, setNotes }: any) {
 
   const panelRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!selectedDate) return
 
     const ctx = gsap.context(() => {
@@ -28,7 +28,9 @@ export default function NotesPanel({ selectedDate, notes, setNotes }: any) {
     )
   }
 
-  const formattedDate = new Date(selectedDate).toLocaleDateString(undefined, {
+  const [y, m, d] = selectedDate.split("-").map(Number)
+  const dateObj = new Date(y, m, d)
+  const formattedDate = dateObj.toLocaleDateString(undefined, {
     day: "numeric",
     month: "short",
     year: "numeric",
