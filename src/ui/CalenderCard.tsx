@@ -17,6 +17,7 @@ export default function CalendarCard() {
   const containerRef = useRef<HTMLDivElement>(null)
   const currentRef = useRef<HTMLDivElement>(null)
   const nextRef = useRef<HTMLDivElement>(null)
+  const shadowRef = useRef<HTMLDivElement>(null)
 
   const [selectedDate, setSelectedDate] = useState<string | null>(() => {
     const today = new Date()
@@ -25,13 +26,6 @@ export default function CalendarCard() {
 
   const [notes, setNotes] = useState<{ [key: string]: string }>({})
 
-  const year = displayDate.getFullYear()
-  const month = displayDate.getMonth()
-
-  const nextYear = currentDate.getFullYear()
-  const nextMonth = currentDate.getMonth()
-
-  // Load notes
   useEffect(() => {
     const saved = localStorage.getItem("calendar-notes")
     if (saved) setNotes(JSON.parse(saved))
@@ -41,9 +35,10 @@ export default function CalendarCard() {
     localStorage.setItem("calendar-notes", JSON.stringify(notes))
   }, [notes])
 
-  // 🔥 PAGE FLIP ANIMATION
   useEffect(() => {
     if (currentDate.getTime() === displayDate.getTime()) return
+
+    const direction = currentDate > displayDate ? -1 : 1
 
     const ctx = gsap.context(() => {
 
@@ -51,22 +46,48 @@ export default function CalendarCard() {
         onComplete: () => setDisplayDate(currentDate)
       })
 
+      // initial states
       gsap.set(nextRef.current, {
-        rotateY: -90,
-        transformOrigin: "left center"
+        rotateY: direction === 1 ? -100 : 100,
+        transformOrigin: direction === 1 ? "left center" : "right center",
+        scale: 0.95
       })
 
-      tl.to(currentRef.current, {
-        rotateY: 90,
-        transformOrigin: "right center",
-        duration: 0.8,
-        ease: "power2.in"
+      gsap.set(shadowRef.current, {
+        opacity: 0
       })
-      .to(nextRef.current, {
-        rotateY: 0,
-        duration: 0.8,
-        ease: "power2.out"
-      }, "-=0.4")
+
+      tl
+        // shadow appears
+        .to(shadowRef.current, {
+          opacity: 0.25,
+          duration: 0.3,
+          ease: "power1.out"
+        })
+
+        // current page flips out
+        .to(currentRef.current, {
+          rotateY: direction === 1 ? 95 : -95,
+          transformOrigin: direction === 1 ? "right center" : "left center",
+          scale: 0.98,
+          duration: 0.9,
+          ease: "power3.inOut"
+        }, 0)
+
+        // next page flips in
+        .to(nextRef.current, {
+          rotateY: 0,
+          scale: 1,
+          duration: 0.9,
+          ease: "power3.out"
+        }, 0.25)
+
+        // shadow fades away
+        .to(shadowRef.current, {
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.out"
+        }, 0.6)
 
     }, containerRef)
 
@@ -76,14 +97,21 @@ export default function CalendarCard() {
   return (
     <div
       ref={containerRef}
-      style={{ perspective: "1500px" }}
+      style={{ perspective: "1800px" }}
       className="h-[800px] w-[500px] relative"
     >
+
+      {/* SHADOW OVERLAY (adds realism) */}
+      <div
+        ref={shadowRef}
+        className="absolute inset-0 bg-black z-10 pointer-events-none"
+        style={{ opacity: 0 }}
+      />
 
       {/* CURRENT PAGE */}
       <div
         ref={currentRef}
-        className="absolute inset-0"
+        className="absolute inset-0 z-20"
         style={{ backfaceVisibility: "hidden" }}
       >
         <CardContent
@@ -99,7 +127,7 @@ export default function CalendarCard() {
       {/* NEXT PAGE */}
       <div
         ref={nextRef}
-        className="absolute inset-0"
+        className="absolute inset-0 z-0"
         style={{ backfaceVisibility: "hidden" }}
       >
         <CardContent
