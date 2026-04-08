@@ -1,3 +1,8 @@
+"use client"
+
+import { useEffect, useRef } from "react"
+import gsap from "gsap"
+
 export default function CalendarGrid({
   year,
   month,
@@ -6,28 +11,34 @@ export default function CalendarGrid({
   notes
 }: any) {
 
+  const gridRef = useRef<HTMLDivElement>(null)
+
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const firstDay = (new Date(year, month, 1).getDay() + 6) % 7
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(".day",
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          stagger: 0.03,
+          duration: 0.4,
+          ease: "power2.out"
+        }
+      )
+    }, gridRef)
+
+    return () => ctx.revert()
+  }, [month])
+
   return (
-    <div className="grid grid-cols-7 gap-y-3 gap-x-2 text-center mt-4">
+    <div ref={gridRef} className="grid grid-cols-7 gap-y-3 gap-x-2 text-center mt-4">
 
-      {["Mo","Tu","We","Th","Fr","Sa","Su"].map((d, index) => {
-        const isWeekend = index === 5 || index === 6
-
-        return (
-          <div
-            key={d}
-            className={`text-sm ${
-              isWeekend
-                ? "text-yellow-500 font-medium"
-                : "text-gray-400"
-            }`}
-          >
-            {d}
-          </div>
-        )
-      })}
+      {["Mo","Tu","We","Th","Fr","Sa","Su"].map((d, index) => (
+        <div key={d} className="text-sm text-gray-400">{d}</div>
+      ))}
 
       {Array.from({ length: firstDay }).map((_, i) => (
         <div key={"empty-" + i}></div>
@@ -36,28 +47,18 @@ export default function CalendarGrid({
       {Array.from({ length: daysInMonth }).map((_, i) => {
         const day = i + 1
         const key = `${year}-${month}-${day}`
-
-        const dayOfWeek = new Date(year, month, day).getDay()
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
-
         const hasNote = notes[key]
 
         return (
           <div
             key={day}
             onClick={() => setSelectedDate(key)}
-            className={`py-2 rounded-lg text-sm cursor-pointer transition
+            className={`day py-2 rounded-lg text-sm cursor-pointer transition
               hover:bg-yellow-100
-              ${selectedDate === key ? "bg-yellow-300 font-semibold text-black" : ""}
-              ${
-                isWeekend
-                  ? "text-yellow-500 font-medium"
-                  : "text-gray-700"
-              }
+              ${selectedDate === key ? "bg-yellow-300 font-semibold" : ""}
             `}
           >
             {day}
-
             {hasNote && (
               <div className="w-1 h-1 bg-red-500 mx-auto mt-1 rounded-full" />
             )}

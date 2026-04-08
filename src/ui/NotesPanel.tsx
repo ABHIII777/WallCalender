@@ -1,4 +1,25 @@
+"use client"
+
+import { useEffect, useRef } from "react"
+import gsap from "gsap"
+
 export default function NotesPanel({ selectedDate, notes, setNotes }: any) {
+
+  const panelRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!selectedDate) return
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(panelRef.current,
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4 }
+      )
+    })
+
+    return () => ctx.revert()
+  }, [selectedDate])
+
   if (!selectedDate) {
     return (
       <div className="mt-4 text-sm text-gray-400 text-center">
@@ -14,7 +35,7 @@ export default function NotesPanel({ selectedDate, notes, setNotes }: any) {
   })
 
   return (
-    <div className="mt-4 border-t pt-4">
+    <div ref={panelRef} className="mt-4 border-t pt-4">
 
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm font-medium text-gray-600">
