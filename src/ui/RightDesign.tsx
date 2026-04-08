@@ -31,7 +31,7 @@ export default function RightDesign({ month, year }: Props) {
   const displayYear = year ?? 2026
 
   return (
-    <div className="w-full h-full relative bg-white">
+    <div className="w-full h-full relative bg-white dark:bg-slate-800 transition-colors duration-500">
 
       {/* IMAGE */}
       <img
@@ -58,9 +58,9 @@ export default function RightDesign({ month, year }: Props) {
           clipPath: "polygon(100% 45%, 100% 70%, 50% 70%)"
         }}
       >
-        <div className="absolute right-8 top-[55%] z-30 text-white text-right">
-          <p className="text-2xl font-light tracking-widest">{displayYear}</p>
-          <h2 className="text-3xl font-bold tracking-wider">{monthName}</h2>
+        <div className="absolute right-4 md:right-8 top-[55%] z-30 text-white text-right">
+          <p className="text-lg md:text-2xl font-light tracking-widest">{displayYear}</p>
+          <h2 className="text-xl md:text-3xl font-bold tracking-wider">{monthName}</h2>
         </div>
       </div>
       

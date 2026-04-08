@@ -20,9 +20,9 @@ export default function CalendarCard() {
     const nextRef = useRef<HTMLDivElement>(null)
     const shadowRef = useRef<HTMLDivElement>(null)
 
-    const [selectedDate, setSelectedDate] = useState<string | null>(() => {
+    const [dateRange, setDateRange] = useState<{start: string | null, end: string | null}>(() => {
         const today = new Date()
-        return `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`
+        return { start: `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`, end: null }
     })
 
     const [notes, setNotes] = useState<{ [key: string]: string }>({})
@@ -39,7 +39,6 @@ export default function CalendarCard() {
     useLayoutEffect(() => {
         if (currentDate.getTime() === displayDate.getTime()) return
 
-        const direction = currentDate > displayDate ? -1 : 1
         setIsAnimating(true)
 
         const ctx = gsap.context(() => {
@@ -49,57 +48,46 @@ export default function CalendarCard() {
                     setDisplayDate(currentDate)
                     setIsAnimating(false)
                     
-                    if (selectedDate) {
-                        const [y, m] = selectedDate.split("-").map(Number)
-                        if (y !== currentDate.getFullYear() || m !== currentDate.getMonth()) {
-                            setSelectedDate(`${currentDate.getFullYear()}-${currentDate.getMonth()}-1`)
-                        }
-                    }
+                    // We no longer reset the date selection here because a range might span months
 
                     // Force clear GSAP styles safely
                     gsap.set([currentRef.current, nextRef.current], { clearProps: "all" })
                 }
             })
 
-            const nextZIndex = direction === 1 ? 30 : 10;
-            const currentZIndex = direction === 1 ? 10 : 30;
+            // We use the same tearing animation for both directions now.
+            const nextZIndex = 10;
+            const currentZIndex = 30;
 
-            // next page initial state
+            // Tearing off the current page
             gsap.set(nextRef.current, {
-                rotateY: direction === 1 ? -120 : 120, // deeper rotation
-                transformOrigin: direction === 1 ? "left center" : "right center",
-                z: -50,
-                opacity: 0, // starts invisible
-                scale: 0.96,
+                clearProps: "transform",
+                scale: 0.9,
+                opacity: 0,
                 zIndex: nextZIndex
-            })
+            });
 
             gsap.set(currentRef.current, {
+                clearProps: "transform",
+                transformOrigin: "top left",
                 zIndex: currentZIndex,
                 opacity: 1
-            })
+            });
 
             tl
-                // current page leaves, fading out completely
-                .to(currentRef.current, {
-                    rotateY: direction === 1 ? 120 : -120,
-                    transformOrigin: direction === 1 ? "right center" : "left center",
-                    z: -50,
-                    opacity: 0, // becomes invisible BEFORE it reaches edge-on constraints
-                    scale: 0.98,
-                    duration: 1.2,
-                    ease: "power3.inOut"
-                }, 0)
-
-                // next page enters, fading in
-                .to(nextRef.current, {
-                    rotateY: 0,
-                    opacity: 1,
-                    z: 0,
-                    scale: 1,
-                    duration: 1.2,
-                    ease: "power3.inOut"
-                }, 0) // starts at exactly same time (0)
+              .to(currentRef.current, {
+                  y: 1200,          // Drop far out of view for taller screens
+                  rotationZ: -25,    // Rip from top left
+                  opacity: 0,
+                  duration: 0.9,
+                  ease: "power2.in"
+              }, 0)
+              .to(nextRef.current, {
+                  scale: 1,
+                  opacity: 1,
+                  duration: 0.9,
+                  ease: "power3.out"
+              }, 0.2); // slight delay
 
         }, containerRef)
 
@@ -110,7 +98,7 @@ export default function CalendarCard() {
         <div
             ref={containerRef}
             style={{ perspective: "1800px" }}
-            className="h-[800px] w-[500px] relative mt-10"
+            className="w-full max-w-[500px] h-[90vh] md:h-[85vh] min-h-[500px] md:min-h-[700px] max-h-[850px] relative mt-2 md:mt-10 mx-auto"
         >
 
             {/* SHADOW OVERLAY (adds realism) */}
@@ -128,8 +116,8 @@ export default function CalendarCard() {
             >
                 <CardContent
                     date={displayDate}
-                    selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
                     notes={notes}
                     setNotes={setNotes}
                     setCurrentDate={setCurrentDate}
@@ -145,8 +133,8 @@ export default function CalendarCard() {
             >
                 <CardContent
                     date={currentDate}
-                    selectedDate={selectedDate}
-                    setSelectedDate={setSelectedDate}
+                    dateRange={dateRange}
+                    setDateRange={setDateRange}
                     notes={notes}
                     setNotes={setNotes}
                     setCurrentDate={setCurrentDate}
@@ -160,8 +148,8 @@ export default function CalendarCard() {
 
 function CardContent({
     date,
-    selectedDate,
-    setSelectedDate,
+    dateRange,
+    setDateRange,
     notes,
     setNotes,
     setCurrentDate,
@@ -172,25 +160,25 @@ function CardContent({
     const month = date.getMonth()
 
     return (
-        <Card className="h-full w-full overflow-hidden flex flex-col rounded-2xl shadow-[-25px_25px_40px_-10px_rgba(0,0,0,0.15)] bg-white">
+        <Card className="h-full w-full overflow-hidden flex flex-col rounded-xl shadow-[-40px_50px_80px_-15px_rgba(0,0,0,0.3)] bg-white dark:bg-slate-800 dark:border-slate-700 transition-colors duration-500">
 
-            <div className="h-[55%] shrink-0 relative overflow-visible z-10">
+            <div className="h-[35%] md:h-[50%] shrink-0 relative overflow-visible z-10 transition-all duration-300">
                 <RightDesign month={month} year={year} />
             </div>
 
             {/* No divider needed based on design */}
 
-            <div className="flex-1 bg-white pt-2 pb-6 px-6 flex gap-6 overflow-hidden z-0">
+            <div className="flex-1 bg-white dark:bg-slate-800 pt-2 pb-4 md:pb-6 px-4 md:px-6 flex flex-col md:flex-row gap-4 md:gap-6 overflow-hidden z-0 transition-colors duration-500">
 
-                <div className="w-[35%] h-full pt-10">
+                <div className="w-full md:w-[35%] flex-1 min-h-[90px] md:min-h-[140px] md:h-full md:pt-10 order-2 md:order-1 overflow-hidden">
                     <NotesPanel
-                        selectedDate={selectedDate}
+                        dateRange={dateRange}
                         notes={notes}
                         setNotes={setNotes}
                     />
                 </div>
 
-                <div className="w-[65%] flex flex-col pt-2">
+                <div className="w-full md:w-[65%] flex flex-col pt-2 order-1 md:order-2 shrink-0 h-auto md:h-full">
 
                     <Header
                         currentDate={date}
@@ -198,12 +186,12 @@ function CardContent({
                         isAnimating={isAnimating}
                     />
 
-                    <div className="mt-2 flex-1 overflow-y-auto">
+                    <div className="mt-2 flex-1 overflow-y-auto mb-2 md:mb-0">
                         <CalendarGrid
                             year={year}
                             month={month}
-                            selectedDate={selectedDate}
-                            setSelectedDate={setSelectedDate}
+                            dateRange={dateRange}
+                            setDateRange={setDateRange}
                             notes={notes}
                         />
                     </div>

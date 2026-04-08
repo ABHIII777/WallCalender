@@ -10,7 +10,7 @@ export default function Header({ currentDate, setCurrentDate, isAnimating }: any
       <Button
         variant="outline"
         size="icon"
-        className="h-8 w-8 rounded-full shadow-sm text-gray-500 hover:text-gray-900 border-gray-200 bg-white"
+        className="h-8 w-8 rounded-full shadow-sm text-gray-500 hover:text-gray-900 border-gray-200 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-700 transition-colors"
         onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
         disabled={isAnimating}
       >
@@ -20,7 +20,7 @@ export default function Header({ currentDate, setCurrentDate, isAnimating }: any
       <Button
         variant="outline"
         size="icon"
-        className="h-8 w-8 rounded-full shadow-sm text-gray-500 hover:text-gray-900 border-gray-200 bg-white"
+        className="h-8 w-8 rounded-full shadow-sm text-gray-500 hover:text-gray-900 border-gray-200 bg-white dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400 dark:hover:text-slate-100 dark:hover:bg-slate-700 transition-colors"
         onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
         disabled={isAnimating}
       >
