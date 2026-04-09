@@ -34,7 +34,7 @@ export default function App() {
       {/* Modern Floating Theme Switcher */}
       <button 
         onClick={() => setIsDark(!isDark)}
-        className="absolute top-6 right-6 z-50 px-4 py-2 rounded-full font-medium text-sm backdrop-blur-xl border transition-all duration-300 shadow-md 
+        className="fixed top-4 right-4 md:top-6 md:right-6 z-50 px-4 py-2 rounded-full font-medium text-sm backdrop-blur-xl border transition-all duration-300 shadow-md 
         bg-white/50 border-gray-200 text-slate-800 hover:bg-white/80 
         dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800/80"
       >
